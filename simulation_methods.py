@@ -5,8 +5,6 @@ Created on Sat Nov 18 11:06:44 2017
 @author: Victor
 """
 
-#change
-
 import numpy as np
 
 class Euler_Maruyama:
