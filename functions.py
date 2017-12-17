@@ -86,7 +86,11 @@ def expansion(n,p=10):
     decomp = np.append(decomp, a)
     return decomp
 
-
+def integrate_expansion(x,p=10):
+    res = 0
+    for i in range(len(x)):
+        res = res + x[i]*(p**i)
+    return res
 
 #RETURNS A NUMPY ARRAY CONTAINING THE p-ADIC DECOMPOSITION OF x 
 #IE IF x = x_1*p^(-1) + x_2*p^(-2) + ...
@@ -106,8 +110,12 @@ def expansion_01(x,p=10,size=20):
         
     return decomp
 
-
-
+def integrate_expansion_01(x,p):
+    res = 0
+    for i in range(len(x)):
+        res = res + x[i]*(p**(-(i+1)))
+    return res
+    
 def kakutani_adding_machine(x,y,p,size=20):
     
     if (type(x)==float):
