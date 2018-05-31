@@ -19,7 +19,7 @@ class Euler_Maruyama:
         self.sigma=sigma
         self.n=n
         self.delta = (self.T-self.t_0)/float(n)
-        self.list_t=np.linspace(self.t_0, self.T, num=self.n, endpoint=False, dtype=float)
+        self.list_t=np.linspace(self.t_0, self.T, num=self.n, endpoint=True, dtype=float)
         
     def integrate(self):
         results = np.zeros(self.n)
