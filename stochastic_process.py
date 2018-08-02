@@ -37,6 +37,45 @@ class Diffusion:
     def __init__(self, param=Parametres()):
         self.Param = param
 
+        
+class Bachelier:
+    """ dS_t = sigma*dW_t
+    Marche aléatoire avec drift. 
+    """
+    
+    def __init__(self, param=Parametres()):
+        """ Le constructeur.
+        """
+        self.Param = param
+    
+    def Path(self, x_init=100, n_paths=10, n_points=365, t=0, T=1, simulation_method='euler_maruyama'):
+        """ La méthode Path permet de simuler des trajectoires. 
+        n_paths Le nombre de trajectoires à simuler.     
+        n_points Le nombre de points à simuler par trajectoire.
+        t Le début de la période (à choisir en lien avec la volatilité).
+        T La fin de la période (à choisir en lien avec la volatilité).
+        simulation_method la méthode numérique.
+        """
+        if simulation_method=='analytical':
+            dt = (T-t)/float(n_points)
+            return np.cumsum(np.insert(np.random.normal(scale=np.sqrt(dt)*self.Param.b_sigma, size=(n_points-1, n_paths)),
+                                       0, 
+                                       np.full(n_paths, x_init),
+                                       axis=0),
+                             axis=0)
+        
+        if simulation_method=='euler_maruyama':
+            return Euler_Maruyama(X_0=x_init,
+                                  t_0=t,
+                                  T=T,
+                                  sigma=(lambda t,x: self.Param.b_sigma),
+                                  n_points=n_points,
+                                  n_paths=n_paths).integrate()
+        
+        else:
+            print('{} is not a valid simulation method'.format(simulation_method))
+        
+        
 #BLACK-SCHOLES
 class Black_Scholes:
     
@@ -76,7 +115,36 @@ class Ornstein_Uhlenbeck:
         
         else:
             print('must pass a valid method')
+ 
+class Clewlow_Strickland:
+    """ dF_tT = F_tT*sigma*exp(-theta*(T-t))*dW_t
+    Le modèle de Clewlow Strickland est un modèle martingale log-normal. 
+    """
+    
+    def __init__(self, param=Parametres()):
+        """ Le constructeur
+        """
+        self.Param = param
+    
+    def Path(self, x_init=100, n_paths=10, n_points=365, t=0, T=1, simulation_method='euler_maruyama'):
+        """ La méthode Path permet de simuler des trajectoires. 
+        n_paths Le nombre de trajectoires à simuler.     
+        n_points Le nombre de points à simuler par trajectoire.
+        t Le début de la période (à choisir en lien avec la volatilié).
+        T La fin de la période (à choisir en lien avec la volatilité).
+        simulation_method la méthode numérique.
+        """
+        if simulation_method=='euler_maruyama':
+            return Euler_Maruyama(X_0=x_init, 
+                                  t_0=t, 
+                                  T=T, 
+                                  sigma=(lambda s,x: x*self.Param.cs_sigma*np.exp(-self.Param.cs_theta*(T-s))), 
+                                  n_points=n_points, 
+                                  n_paths=n_paths).integrate()
             
+        else:
+            print('{} is not a valid method'.format(simulation_method))
+
 class Lucia_Schwartz_2002:
     
     def __init__(self, param=Parametres()):
